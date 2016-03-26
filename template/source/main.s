@@ -1,25 +1,37 @@
 .section .init
 .global _start
 _start:
-
+.section .text
+main:
+mov sp,#0x8000
 ldr r0, =0x20200000
 
-mov r1,#1
-lsl r1,#18
-str r1,[r0,#4]
+pinNum .req r0
+pinFunc .req r1
 
-mov r1,#1
-lsl r1,#16
+mov pinNum,#16
+mov pinFunc,#1
+
+bl SetGpioFunction
+
+.unreq pinNum
+.unreq pinFunc
 
 loop$:
 
-str r1,[r0,#40]
+pinNum .req r0
+pinVal .req r1
 
-mov r2,#0x3F0000
-wait1$:
-sub r2,#1
-cmp r2,#0
-bne wait1$
+mov pinNum,#16
+
+mov pinVal,#0
+bl SetGpio
+
+mov pinVal,#1
+bl SetGpio
+
+.unreq pinNum
+.unreq pinVal
 
 str r1,[r0,#28]
 
