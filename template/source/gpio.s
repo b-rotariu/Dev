@@ -5,22 +5,48 @@ mov pc,lr
 
 .globl SetGpioFunction
 SetGpioFunction:
-cmp r0,#53
-cmpls r1,#7
+
+pinNum .req r0
+pinFunc .req r1
+
+cmp pinNum,#53
+cmpls pinFunc,#7
 movhi pc,lr
+
 push {lr}
-mov r2,r0
+mov r2,pinNum
+.unreq pinNum
+pinNum .req r2
+
 bl GetGpioAddress
+gpioAddr .req r0
 
 functionLoop$:
-    cmp r2,#9
-    subhi r2,#10
-    addhi r0,#4
+    cmp pinNum,#9
+    subhi pinNum,#10
+    addhi gpioAddr,#4
     bhi functionLoop$
 
-add r2, r2,lsl #1
-lsl r1,r2
-str r1,[r0]
+add pinNum, pinNum,lsl #1
+lsl pinFunc,pinNum
+
+mask .req r3
+mov mask,#7
+lsl mask,pinNum
+.unreq pinNum
+
+mvn mask,mask
+oldFunc .req,r2
+ldr oldFunc,[gpioAddr]
+and oldFunc,mask
+.unreq mask
+
+orr pinFunc,oldFunc
+.unreq oldFunc
+
+str pinFunc,[gpioAddr]
+.unreq pinFunc
+.unreq gpioAddr
 pop {pc}
 
 .globl SetGpio
