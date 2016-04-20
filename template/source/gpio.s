@@ -36,7 +36,7 @@ lsl mask,pinNum
 .unreq pinNum
 
 mvn mask,mask
-oldFunc .req,r2
+oldFunc .req r2
 ldr oldFunc,[gpioAddr]
 and oldFunc,mask
 .unreq mask
@@ -56,25 +56,36 @@ pinVal .req r1
 cmp pinNum,#53
 movhi pc,lr
 push {lr}
+
 mov r2,pinNum
 .unreq pinNum
 pinNum .req r2
+
 bl GetGpioAddress
+
 gpioAddr .req r0
 pinbank .req r3
+
 lsr pinbank,pinNum,#5
 lsl pinbank,#2
+
 add gpioAddr, pinbank
 .unreq pinbank
+
 and pinNum,#31
 setBit .req r3
+
 mov setBit,#1
 lsl setBit,pinNum
 .unreq pinNum
+
 teq pinVal,#0
 .unreq pinVal
+
 streq setBit,[gpioAddr,#40]
 streq setBit,[gpioAddr,#28]
+
 .unreq setBit
 .unreq gpioAddr
+
 pop {pc}

@@ -1,0 +1,14 @@
+
+template/kernel.list
+
+template/kernel.map
+
+template/kernel.img
+
+template/build/systemTimer.o
+
+template/build/output.elf
+
+*.o
+
+*.o
